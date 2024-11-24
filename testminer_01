@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTC Miner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        .btc-logo {
+            width: 100px;
+            margin: 20px auto;
+        }
+        .counter {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #ff9900;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #e68a00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BTC Miner</h1>
+        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC Miner Logo" class="btc-logo">
+        <div class="counter" id="btcCounter">0.00000000 BTC</div>
+        <input type="text" id="walletAddress" placeholder="BTC Cüzdan Adresinizi Girin">
+        <button id="withdrawButton">Çek</button>
+    </div>
+
+    <script>
+        // Kullanıcıya özel BTC miktarı
+        let userBTC = parseFloat(localStorage.getItem('userBTC')) || 0.00000000;
+        const incrementRatePerSecond = 0.00001 / 3600; // Saniyede artış miktarı
+        const counterElement = document.getElementById('btcCounter');
+
+        // Her saniye BTC miktarını güncelle
+        function updateBTC() {
+            userBTC += incrementRatePerSecond;
+            localStorage.setItem('userBTC', userBTC.toFixed(8));
+            counterElement.textContent = userBTC.toFixed(8) + " BTC";
+        }
+
+        // Sayaç yenileme her saniye
+        setInterval(updateBTC, 1000); // 1 saniye (1000 ms)
+
+        // Sayfa yüklenince mevcut değeri göster
+        counterElement.textContent = userBTC.toFixed(8) + " BTC";
+
+        // Çekim işlemi
+        document.getElementById('withdrawButton').addEventListener('click', () => {
+            const walletAddress = document.getElementById('walletAddress').value;
+            if (!walletAddress) {
+                alert("Lütfen BTC cüzdan adresinizi girin!");
+                return;
+            }
+            alert(`Çekim işlemi başlatıldı!\nAdres: ${walletAddress}\nMiktar: ${userBTC.toFixed(8)} BTC`);
+            // Burada backend'e çekim talebi gönderilmelidir
+            userBTC = 0; // Çekimden sonra sıfırla
+            localStorage.setItem('userBTC', userBTC.toFixed(8));
+            counterElement.textContent = userBTC.toFixed(8) + " BTC";
+        });
+    </script>
+</body>
+</html>
